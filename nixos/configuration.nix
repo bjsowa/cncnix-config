@@ -8,11 +8,24 @@
 
 {
   imports = [
+    ./disko.nix
     (inputs.nixpkgs-linuxcnc + "/nixos/modules/programs/linuxcnc.nix")
   ];
 
   boot = {
     kernelPackages = pkgs.linuxPackages_6_18;
+    loader.systemd-boot.enable = true;
+    loader.efi.canTouchEfiVariables = true;
+    initrd.availableKernelModules = [
+      "virtio_net"
+      "virtio_pci"
+      "virtio_mmio"
+      "virtio_blk"
+      "virtio_scsi"
+      "9p"
+      "9pnet_virtio"
+      "qemu_fw_cfg"
+    ];
   };
 
   environment.systemPackages = with pkgs; [

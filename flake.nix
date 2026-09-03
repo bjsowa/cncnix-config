@@ -26,7 +26,10 @@
       nixosConfigurations = {
         cncnix = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
-          modules = [ ./nixos/configuration.nix ];
+          modules = [
+            inputs.disko.nixosModules.disko
+            ./nixos/configuration.nix
+          ];
         };
       };
     };
