@@ -67,10 +67,19 @@
     linuxcnc.enable = true;
   };
 
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "yes";
+      PasswordAuthentication = true;
+    };
+  };
+
   system.stateVersion = "26.05";
 
   users = {
     users = {
+      root.password = "cnc";
       cnc = {
         isNormalUser = true;
         extraGroups = [
