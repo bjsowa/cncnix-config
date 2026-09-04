@@ -13,7 +13,22 @@
   ];
 
   boot = {
-    kernelPackages = pkgs.linuxPackages_6_18;
+    kernelPackages = pkgs.linuxPackagesFor (
+      pkgs.linux_6_18.override {
+        structuredExtraConfig = with lib.kernel; {
+          EXPERT = yes;
+          PREEMPT_RT = yes;
+          RT_GROUP_SCHED = no;
+        };
+        ignoreConfigErrors = true;
+      }
+    );
+    kernelParams = [
+      "isolcpus=1"
+      "nohz_full=1"
+      "rcu_nocbs=1"
+      "irqaffinity=0"   # Routes all routeable hardware interrupts to Core 0
+    ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     initrd.availableKernelModules = [
@@ -65,6 +80,12 @@
 
   programs = {
     linuxcnc.enable = true;
+  };
+
+  services.xserver = {
+    enable = true;
+    desktopManager.xfce.enable = true;
+    displayManager.lightdm.enable = true;
   };
 
   services.openssh = {
