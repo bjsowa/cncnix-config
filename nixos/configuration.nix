@@ -27,7 +27,7 @@
       "isolcpus=1"
       "nohz_full=1"
       "rcu_nocbs=1"
-      "irqaffinity=0"   # Routes all routeable hardware interrupts to Core 0
+      "irqaffinity=0" # Routes all routeable hardware interrupts to Core 0
     ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -44,13 +44,14 @@
   };
 
   environment.systemPackages = with pkgs; [
-    vim
+    curl
+    firefox
     git
     htop
+    jq
     tmux
     wget
-    curl
-    jq
+    vim
   ];
 
   i18n = {
