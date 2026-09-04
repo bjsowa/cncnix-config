@@ -28,6 +28,10 @@
       "nohz_full=1"
       "rcu_nocbs=1"
       "irqaffinity=0" # Routes all routeable hardware interrupts to Core 0
+
+      "processor.max_cstate=0" # Disable ACPI processor C-states
+      "intel_idle.max_cstate=0" # Disable Intel driver C-states (or amd_iommu=off if AMD)
+      "idle=poll" # Never sleep the CPU (keeps polling instead of sleeping)
     ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -49,6 +53,7 @@
     git
     htop
     jq
+    mesaflash
     tmux
     wget
     vim
@@ -79,14 +84,55 @@
     hostPlatform = "x86_64-linux";
   };
 
+  # Lock CPU to max frequency (performance governor)
+  powerManagement.cpuFreqGovernor = "performance";
+
   programs = {
     linuxcnc.enable = true;
   };
 
-  services.xserver = {
-    enable = true;
-    desktopManager.xfce.enable = true;
-    displayManager.lightdm.enable = true;
+  security.pam.loginLimits = [
+    {
+      domain = "@wheel";
+      item = "rtprio";
+      type = "-";
+      value = "99";
+    }
+    {
+      domain = "@wheel";
+      item = "memlock";
+      type = "-";
+      value = "unlimited";
+    }
+    {
+      domain = "@wheel";
+      item = "nice";
+      type = "-";
+      value = "-20";
+    }
+  ];
+
+  services = {
+    displayManager = {
+      autoLogin = {
+        enable = true;
+        user = "cnc";
+      };
+    };
+
+    xserver = {
+      enable = true;
+      desktopManager.xfce.enable = true;
+      displayManager.lightdm.enable = true;
+
+      # Prevent screen blanking and DPMS sleep in X11
+      serverFlagsSection = ''
+        Option "BlankTime" "0"
+        Option "StandbyTime" "0"
+        Option "SuspendTime" "0"
+        Option "OffTime" "0"
+      '';
+    };
   };
 
   services.openssh = {
@@ -98,6 +144,13 @@
   };
 
   system.stateVersion = "26.05";
+
+  systemd.targets = {
+    sleep.enable = false;
+    suspend.enable = false;
+    hibernate.enable = false;
+    hybrid-sleep.enable = false;
+  };
 
   users = {
     users = {
