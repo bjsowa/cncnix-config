@@ -36,14 +36,13 @@
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
     initrd.availableKernelModules = [
-      "virtio_net"
-      "virtio_pci"
-      "virtio_mmio"
-      "virtio_blk"
-      "virtio_scsi"
-      "9p"
-      "9pnet_virtio"
-      "qemu_fw_cfg"
+      "ahci"
+      "xhci_pci"
+      "ehci_pci"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
+      "sr_mod"
     ];
   };
 
@@ -70,6 +69,15 @@
     zip
   ];
 
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+    extraPackages = with pkgs; [
+      intel-vaapi-driver # Haswell uses the legacy intel-vaapi-driver (libva-intel-driver)
+      libvdpau-va-gl
+    ];
+  };
+
   i18n = {
     defaultLocale = "en_US.UTF-8";
     supportedLocales = [
@@ -86,7 +94,7 @@
 
     wg-quick.interfaces = {
       wg-io = {
-        autostart = false;  # TODO: Change to true when the key is available
+        autostart = true;
         address = [ "10.100.0.4/24" ];
         listenPort = 51820;
         privateKeyFile = "/private/secrets/wg-io.key";
@@ -98,6 +106,7 @@
               "10.100.0.0/24"
               "192.168.10.0/24"
             ];
+            persistentKeepalive = 25;
           }
         ];
       };
@@ -184,7 +193,10 @@
         variant = "";
       };
 
-      desktopManager.xfce.enable = true;
+      desktopManager.xfce = {
+        enable = true;
+        enableScreensaver = false;
+      };
       displayManager.lightdm.enable = true;
 
       # Prevent screen blanking and DPMS sleep in X11
