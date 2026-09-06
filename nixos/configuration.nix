@@ -84,6 +84,24 @@
     hostPlatform = "x86_64-linux";
   };
 
+  nix =
+    let
+      flakeInputs = lib.filterAttrs (_: lib.isType "flake") inputs;
+    in
+    {
+      settings = {
+        experimental-features = "nix-command flakes";
+        flake-registry = "";
+      };
+
+      # Opinionated: disable channels
+      channel.enable = false;
+
+      # Make flake registry and nix path match flake inputs
+      registry = lib.mapAttrs (_: flake: { inherit flake; }) flakeInputs;
+      nixPath = lib.mapAttrsToList (n: _: "${n}=flake:${n}") flakeInputs;
+    };
+
   # Lock CPU to max frequency (performance governor)
   powerManagement.cpuFreqGovernor = "performance";
 
@@ -120,8 +138,22 @@
       };
     };
 
+    openssh = {
+      enable = true;
+      settings = {
+        PermitRootLogin = "yes";
+        PasswordAuthentication = true;
+      };
+    };
+
     xserver = {
       enable = true;
+
+      xkb = {
+        layout = "pl";
+        variant = "";
+      };
+
       desktopManager.xfce.enable = true;
       displayManager.lightdm.enable = true;
 
@@ -135,14 +167,6 @@
     };
   };
 
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "yes";
-      PasswordAuthentication = true;
-    };
-  };
-
   system.stateVersion = "26.05";
 
   systemd.targets = {
@@ -151,6 +175,8 @@
     hibernate.enable = false;
     hybrid-sleep.enable = false;
   };
+
+  time.timeZone = "Europe/Warsaw";
 
   users = {
     users = {
