@@ -83,6 +83,25 @@
     hostName = "cncnix";
     networkmanager.enable = true;
     firewall.enable = false;
+
+    wg-quick.interfaces = {
+      wg-io = {
+        autostart = false;  # TODO: Change to true when the key is available
+        address = [ "10.100.0.4/24" ];
+        listenPort = 51820;
+        privateKeyFile = "/private/secrets/wg-io.key";
+        peers = [
+          {
+            publicKey = "io/aP205KKnDPV8GYWUbIfnodrjl4lwdcEFMhM9IlE4=";
+            endpoint = "78.46.205.86:51820";
+            allowedIPs = [
+              "10.100.0.0/24"
+              "192.168.10.0/24"
+            ];
+          }
+        ];
+      };
+    };
   };
 
   nixpkgs = {
