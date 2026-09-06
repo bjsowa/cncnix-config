@@ -49,14 +49,25 @@
 
   environment.systemPackages = with pkgs; [
     curl
+    dig
     firefox
+    file
     git
     htop
     jq
+    lshw
     mesaflash
+    pciutils
+    python3
+    rclone
+    screen
     tmux
-    wget
+    unrar
+    usbutils
     vim
+    vscode
+    wget
+    zip
   ];
 
   i18n = {
