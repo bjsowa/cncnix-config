@@ -140,6 +140,11 @@ net z-home-sw     =>  joint.1.home-sw-in
 net z-neg-limit     =>  joint.1.neg-lim-sw-in
 net z-pos-limit     =>  joint.1.pos-lim-sw-in
 
+# --- ALARM SIGNALS ---
+
+net z-alarm-in <= hm2_7i96s.0.gpio.001.in
+net z-alarm-in => joint.1.amp-fault-in
+
 #*******************
 #  SPINDLE
 #*******************
