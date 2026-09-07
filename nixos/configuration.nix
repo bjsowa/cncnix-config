@@ -92,6 +92,16 @@
     networkmanager.enable = true;
     firewall.enable = false;
 
+    interfaces.enp2s0 = {
+      useDHCP = true;
+      ipv4.addresses = [
+        {
+          address = "192.168.1.10";
+          prefixLength = 24;
+        }
+      ];
+    };
+
     wg-quick.interfaces = {
       wg-io = {
         autostart = true;
