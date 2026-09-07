@@ -84,7 +84,7 @@ net x-pos-limit     =>  joint.0.pos-lim-sw-in
 
 # --- ALARM SIGNALS ---
 
-net x-alarm-in <= hm2_7i96s.0.gpio.000.in
+net x-alarm-in <= hm2_7i96s.0.gpio.000.in_not
 net x-alarm-in => joint.0.amp-fault-in
 
 #*******************
