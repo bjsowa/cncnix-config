@@ -185,6 +185,10 @@
       };
     };
 
+    udev.extraRules = ''
+      ATTRS{idVendor}=="10ce", ATTRS{idProduct}=="eb70", MODE="666", OWNER="root", GROUP="users"
+    '';
+
     xserver = {
       enable = true;
 
