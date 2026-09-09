@@ -32,6 +32,11 @@
       "processor.max_cstate=0" # Disable ACPI processor C-states
       "intel_idle.max_cstate=0" # Disable Intel driver C-states (or amd_iommu=off if AMD)
       "idle=poll" # Never sleep the CPU (keeps polling instead of sleeping)
+      "radeon.si_support=0"
+      "amdgpu.si_support=1"
+      "radeon.cik_support=0"
+      "amdgpu.cik_support=1"
+      "amdgpu.gpu_recovery=1"
     ];
     loader.systemd-boot.enable = true;
     loader.efi.canTouchEfiVariables = true;
@@ -69,13 +74,20 @@
     zip
   ];
 
-  hardware.graphics = {
-    enable = true;
-    enable32Bit = true;
-    extraPackages = with pkgs; [
-      intel-vaapi-driver # Haswell uses the legacy intel-vaapi-driver (libva-intel-driver)
-      libvdpau-va-gl
-    ];
+  boot.initrd.kernelModules = [ "amdgpu" ];
+  boot.kernelModules = [ "amdgpu" ];
+  services.xserver.videoDrivers = [ "amdgpu" ];
+
+  hardware = {
+    graphics = {
+      enable = true;
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        intel-vaapi-driver # Haswell uses the legacy intel-vaapi-driver (libva-intel-driver)
+        libvdpau-va-gl
+      ];
+    };
+    enableRedistributableFirmware = true;
   };
 
   i18n = {
